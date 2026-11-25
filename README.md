@@ -29,6 +29,19 @@ personnage D&D 5e typiques) :
 
 ## Setup
 
+### Installer Ollama
+
+Suivre le guide officiel : <https://docs.ollama.com/download> (Linux via un
+simple `curl -fsSL https://ollama.com/install.sh | sh`, installateurs macOS
+et Windows téléchargeables). Vérifier l'installation avec :
+
+```sh
+ollama --version
+ollama serve   # si le service n'est pas déjà lancé
+```
+
+### Installer le module
+
 ```sh
 nvm use          # .nvmrc
 npm install
