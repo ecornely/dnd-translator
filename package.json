@@ -1,7 +1,7 @@
 {
   "name": "dnd-translator",
   "version": "0.1.0",
-  "description": "Traduit les valeurs textuelles d'un JSON de personnage D&D 5e via Ollama local (port Node du translator de pdf-pipeline)",
+  "description": "Traduit les valeurs textuelles d'un JSON de personnage D&D 5e en français via Ollama local (conversion d'unités, glossaire versionné)",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -17,6 +17,10 @@
     "test": "tsx test/translator.test.ts && tsc --noEmit"
   },
   "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecornely/dnd-translator.git"
+  },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "tsx": "^4.19.0",

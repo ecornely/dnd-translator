@@ -1,11 +1,16 @@
 # dnd-translator
 
-Portage Node du module `translator` de la pipeline v1
-([`../pdf-pipeline/dnd-beyond-extract/src/main/python/translator/`](../../pdf-pipeline/dnd-beyond-extract/src/main/python/translator/)).
-Traduit les valeurs textuelles de n'importe quelle structure JSON (fiches de
-personnage D&D 5e) en français, via Ollama **local** — aucun envoi distant.
+Traduit les valeurs textuelles d'un JSON de personnage D&D 5e en français,
+via Ollama **local** — aucun envoi distant.
 
-Le comportement est identique à la version Python :
+C'est l'une des briques de la pipeline `dom-pipeline` :
+
+```
+Tampermonkey (DOM + API) → dnd-dom-extract (JSON) → dnd-translator (JSON traduit) → dnd-print-sheets (fiche HTML à thèmes)
+```
+
+Le module fonctionne sur n'importe quelle structure JSON (fiches de
+personnage D&D 5e typiques) :
 
 - conversion des unités avant traduction : `30 ft.` → `9 m. (6 cells)`,
   `10 lbs` → `4.5 kg` ; pour la structure maison de `dnd-dom-extract`, les
@@ -15,7 +20,7 @@ Le comportement est identique à la version Python :
   est réécrit (`ft.` → `m`, `lb.` → `kg`) — l'afficheur lit l'unité dans
   les données ;
 - glossaire de termes D&D protégés et phrases exactes versionnés dans
-  `rules.json` (copié de v1 ; vérifier le modèle et les phrases après copie) ;
+  `rules.json` ;
 - texte déjà français détecté et laissé tel quel (heuristique locale) ;
 - textes longs découpés (phrases, puis mots), retours à la ligne préservés ;
 - traduction par lots avec IDs UUID et sortie structurée JSON schema côté
@@ -30,8 +35,8 @@ npm install
 ollama pull qwen2.5:7b-instruct
 ```
 
-Comme en v1, pour figer le modèle : `ollama cp qwen2.5:7b-instruct
-dnd-translator:1.0` puis mettre à jour `rules.json`.
+Pour figer le modèle : `ollama cp qwen2.5:7b-instruct dnd-translator:1.0`
+puis mettre à jour `rules.json`.
 
 ## Usage
 
@@ -42,8 +47,7 @@ npm run translate -- character.json -o other.fr.json
 ```
 
 Le vocabulaire s'améliore en éditant `rules.json` à la main (phrases exactes
-dans `phrases`, termes dans `terms`) :
-`teach` de la version Python n'est pas porté.
+dans `phrases`, termes dans `terms`).
 
 Options : `--rules <fichier>` (défaut : `rules.json` à la racine du projet),
 `--model`, `--ollama-url`, `--debug`.
@@ -55,16 +59,17 @@ tests) et `OllamaTranslator` (client `/api/chat` avec format structuré).
 ## Development
 
 ```sh
-npm test    # tests portés de v1 + tsc --noEmit
+npm test    # tsx test/translator.test.ts && tsc --noEmit
 npm run build
 ```
 
-## Différences résiduelles avec v1 (Python)
+## Limites connues
 
 - Le JSON de sortie est resérialisé par `JSON.stringify` (ordre des clés
   préservé, mais pas le formatage d'origine).
-- La détection « déjà en français » utilise une heuristique proche mais pas
-  bit-à-bit identique au `casefold` de Python.
-- La construction de la sortie structurée et le client HTTP sont natifs
-  (`fetch` + `AbortSignal.timeout`), sans équivalent exact des erreurs
-  `urllib` d'origine.
+- La détection « déjà en français » est une heuristique, pas une mesure
+  exacte.
+
+## Licence
+
+GPL-3.0-or-later — voir [LICENSE](LICENSE).
